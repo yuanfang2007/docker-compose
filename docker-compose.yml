@@ -16,6 +16,9 @@ services:
             - MYSQL_ALLOW_EMPTY_PASSWORD=yes
             - MYSQL_DATABASE=api1
         command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8
+        ports:
+            - 3307:3306
+
     api1-elasticsearch:
         image: elasticsearch:2.4.1
     
