@@ -1,0 +1,61 @@
+version: '2'
+services:
+    api1-app:
+        image: api1
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod,swagger
+            - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+            - SPRING_DATASOURCE_URL=jdbc:mysql://api1-mysql:3306/api1?useUnicode=true&characterEncoding=utf8&useSSL=false
+            - JHIPSTER_SLEEP=10
+            - SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES=api1-elasticsearch:9300
+            - JHIPSTER_REGISTRY_PASSWORD=admin
+    api1-mysql:
+        image: mysql:5.7.13
+        environment:
+            - MYSQL_USER=root
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+            - MYSQL_DATABASE=api1
+        command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8
+    api1-elasticsearch:
+        image: elasticsearch:2.4.1
+    
+    gateway1-app:
+        image: gateway1
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod,swagger
+            - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+            - SPRING_DATASOURCE_URL=jdbc:mysql://gateway1-mysql:3306/gateway1?useUnicode=true&characterEncoding=utf8&useSSL=false
+            - SPRING_DATA_CASSANDRA_CONTACTPOINTS=gateway1-cassandra
+            - JHIPSTER_SLEEP=30
+            - SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES=gateway1-elasticsearch:9300
+            - JHIPSTER_REGISTRY_PASSWORD=admin
+        ports:
+            - 8080:8080
+    gateway1-mysql:
+        image: mysql:5.7.13
+        environment:
+            - MYSQL_USER=root
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+            - MYSQL_DATABASE=gateway1
+        command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8
+    gateway1-elasticsearch:
+        image: elasticsearch:2.4.1
+    
+    jhipster-registry:
+        extends:
+            file: jhipster-registry.yml
+            service: jhipster-registry
+
+    jhipster-elasticsearch:
+        extends:
+            file: jhipster-console.yml
+            service: jhipster-elasticsearch
+    jhipster-logstash:
+        extends:
+          file: jhipster-console.yml
+          service: jhipster-logstash
+    jhipster-console:
+        extends:
+            file: jhipster-console.yml
+            service: jhipster-console
+
